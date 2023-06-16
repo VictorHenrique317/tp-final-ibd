@@ -1,0 +1,102 @@
+CREATE TABLE pessoa (
+    id INTEGER,
+    nome TEXT NOT NULL,
+    idade INTEGER NOT NULL,
+	
+	PRIMARY KEY (id)
+);
+
+CREATE TABLE item_catalogo (
+    id INTEGER NOT NULL,
+	id_diretor INTEGER NOT NULL,
+    nome TEXT NOT NULL,
+    genero TEXT NOT NULL,
+	sinopse TEXT NOT NULL,
+	avaliacao REAL NOT NULL,
+    classificacao_indicativa TEXT NOT NULL,	
+	
+	PRIMARY KEY (id),
+	FOREIGN KEY (id_diretor) REFERENCES pessoa(id) ON DELETE RESTRICT,
+	CHECK(genero IN ('Animes', 'Comédia', 'Documentário', 'Dramas', 'Fantasia',
+						 'Ficção científica', 'Romance', 'Suspense', 'Terror',
+						 'Ação', 'Aventura', 'Musical', 'Mistério')),
+	CHECK (avaliacao >= 0 AND avaliacao <= 10),
+	CHECK (classificacao_indicativa IN ('L', '10', '12', '14', '16', '18'))
+);
+
+CREATE TABLE idioma_item (
+	id_item INTEGER NOT NULL,
+	idioma TEXT NOT NULL,
+	
+	PRIMARY KEY (id_item, idioma),
+	FOREIGN KEY (id_item) REFERENCES item_catalogo(id) ON DELETE CASCADE,
+	CHECK(idioma IN ('Português brasileiro', 'Inglês', 'Espanhol'))
+);
+
+CREATE TABLE distribuidora_item (
+	id_item INTEGER NOT NULL,
+	distribuidora TEXT NOT NULL,
+	
+	PRIMARY KEY (id_item, distribuidora),
+	FOREIGN KEY (id_item) REFERENCES item_catalogo(id) ON DELETE CASCADE
+);
+
+CREATE TABLE legenda_item (
+	id_item INTEGER NOT NULL,
+	legenda TEXT NOT NULL,
+	
+	PRIMARY KEY (id_item, legenda),
+	FOREIGN KEY (id_item) REFERENCES item_catalogo(id) ON DELETE CASCADE,
+	CHECK(legenda IN ('Português brasileiro', 'Inglês', 'Espanhol'))
+);
+
+CREATE TABLE atua_em (
+	id_pessoa INTEGER NOT NULL,
+	id_item INTEGER NOT NULL,
+	nome_personagem TEXT NOT NULL,
+	papel_personagem TEXT NOT NULL,
+	
+	PRIMARY KEY (id_pessoa, id_item),
+	FOREIGN KEY (id_pessoa) REFERENCES pessoa(id) ON DELETE CASCADE,
+	FOREIGN KEY (id_item) REFERENCES item_catalogo(id) ON DELETE RESTRICT,
+	CHECK(papel_personagem IN ('Protagonista', 'Coadjuvante'))
+);
+
+CREATE TABLE filme(
+	id_item INTEGER NOT NULL,
+	data_lançamento DATE NOT NULL,
+	duracao_segundos INTEGER NOT NULL,
+	
+	PRIMARY KEY (id_item),
+	FOREIGN KEY (id_item) REFERENCES item_catalogo(id) ON DELETE CASCADE,
+	CHECK(duracao_segundos > 0)
+);
+
+CREATE TABLE serie(
+	id_item INTEGER NOT NULL,
+	qtd_episodios INTEGER NOT NULL,
+	qtd_temporadas INTEGER NOT NULL,
+	
+	PRIMARY KEY (id_item),
+	FOREIGN KEY (id_item) REFERENCES item_catalogo(id) ON DELETE CASCADE,
+	CHECK(qtd_episodios > 0),
+	CHECK(qtd_temporadas > 0)
+);
+
+CREATE TABLE episodio(
+	id_serie INTEGER NOT NULL,
+	n_temporada INTEGER NOT NULL,
+	n_episodio INTEGER NOT NULL,
+	nome TEXT NOT NULL,
+	sinopse TEXT NOT NULL,
+	data_lançamento DATE NOT NULL,
+	avaliacao REAL NOT NULL,
+	duracao_segundos INTEGER NOT NULL,
+	
+	PRIMARY KEY (id_serie, n_temporada, n_episodio),
+	FOREIGN KEY (id_serie) REFERENCES serie(id_item) ON DELETE CASCADE,
+	CHECK(n_temporada > 0),
+	CHECK(n_episodio > 0),
+	CHECK(avaliacao >= 0 AND avaliacao <= 10),
+	CHECK(duracao_segundos > 0)
+);
