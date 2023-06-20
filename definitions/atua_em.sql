@@ -5,8 +5,8 @@ CREATE TABLE atua_em (
 	papel_personagem TEXT NOT NULL,
 	
 	PRIMARY KEY (id_pessoa, id_item),
-	FOREIGN KEY (id_pessoa) REFERENCES pessoa(id) ON DELETE CASCADE,
-	FOREIGN KEY (id_item) REFERENCES item_catalogo(id) ON DELETE RESTRICT,
+	FOREIGN KEY (id_pessoa) REFERENCES pessoa(id) ON DELETE RESTRICT,
+	FOREIGN KEY (id_item) REFERENCES item_catalogo(id) ON DELETE CASCADE,
 	CHECK(papel_personagem IN ('Protagonista', 'Coadjuvante'))
 );
 
